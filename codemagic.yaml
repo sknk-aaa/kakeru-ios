@@ -20,8 +20,11 @@ workflows:
       - name: Setup code signing
         script: |
           keychain initialize
+          PRIVATE_KEY_PATH=/tmp/codemagic_cert_key.pem
+          openssl genrsa -out $PRIVATE_KEY_PATH 2048
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
+            --certificate-key="@file:$PRIVATE_KEY_PATH" \
             --create
           keychain add-certificates
           xcode-project use-profiles
